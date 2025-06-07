@@ -4,6 +4,7 @@ import com.gustavo.luan.model.Person;
 import com.gustavo.luan.service.PersonServices;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -17,13 +18,15 @@ public class PersonContoller {
 
     @GetMapping(value = "/{id}",
      produces = MediaType.APPLICATION_JSON_VALUE)
-     public Person finById(@PathVariable("id") String id) {
-         return service.findById(id);
+     public Person finById(@PathVariable("id") Long id) {
+
+        return service.findById(id);
      }
 
     @GetMapping(
      produces = MediaType.APPLICATION_JSON_VALUE)
      public List<Person> findAll() {
+
         return service.findAll();
      }
 
@@ -31,6 +34,7 @@ public class PersonContoller {
      produces = MediaType.APPLICATION_JSON_VALUE,
      consumes = MediaType.APPLICATION_JSON_VALUE)
      public Person create(@RequestBody Person person) {
+
         return service.create(person);
      }
 
@@ -38,11 +42,13 @@ public class PersonContoller {
     produces = MediaType.APPLICATION_JSON_VALUE,
     consumes = MediaType.APPLICATION_JSON_VALUE)
     public Person update(@RequestBody Person person) {
+
         return service.update(person);
     }
 
     @DeleteMapping(value = "/{id}")
-    public void delete(@PathVariable("id") String id) {
+    public ResponseEntity<?> delete(@PathVariable("id") Long id) {
         service.delete(id);
+        return ResponseEntity.noContent().build();
     }
 }
