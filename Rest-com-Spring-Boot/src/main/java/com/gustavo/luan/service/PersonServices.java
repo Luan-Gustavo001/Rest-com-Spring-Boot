@@ -3,13 +3,14 @@ package com.gustavo.luan.service;
 import com.gustavo.luan.exception.ResourceNotFoundException;
 import com.gustavo.luan.model.Person;
 import com.gustavo.luan.repository.PersonRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicLong;
-import java.util.logging.Logger;
 
 @Service
 public class PersonServices {
@@ -19,7 +20,7 @@ public class PersonServices {
     @Autowired
     PersonRepository repository;
 
-    private Logger logger = Logger.getLogger(PersonServices.class.getName());
+    private Logger logger = LoggerFactory.getLogger(PersonServices.class.getName());
 
     public Person findById(Long id){
         logger.info("Achando uma pessoa!");
