@@ -1,6 +1,9 @@
 package com.gustavo.luan.service;
 
+import com.gustavo.luan.data.dto.PersonDTO;
 import com.gustavo.luan.exception.ResourceNotFoundException;
+import static com.gustavo.luan.mapper.ObjectMapper.parseObject;
+import static com.gustavo.luan.mapper.ObjectMapper.parseListObjects;
 import com.gustavo.luan.model.Person;
 import com.gustavo.luan.repository.PersonRepository;
 import org.slf4j.Logger;
@@ -22,16 +25,17 @@ public class PersonServices {
 
     private Logger logger = LoggerFactory.getLogger(PersonServices.class.getName());
 
-    public Person findById(Long id){
+    public PersonDTO findById(Long id){
         logger.info("Achando uma pessoa!");
+        var entidade = repository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Não achou nenhum registro com esse ID: " + id));
 
-        return repository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Não achou nenhum registro com esse ID: " + id));
+        return parseObject(entidade, PersonDTO.class);
     }
 
-    public List<Person> findAll(){
+    public List<PersonDTO> findAll(){
         logger.info("Achando varias pessoaa!");
 
-        return repository.findAll();
+        return parseListObjects(repository.findAll(), PersonDTO.class);
     }
 
     private Person mockPerson(int i) {
@@ -46,13 +50,14 @@ public class PersonServices {
         return person;
     }
 
-    public Person create(Person person) {
+    public PersonDTO create(PersonDTO person) {
         logger.info("Criando uma pessoa!");
+        var entity = parseObject(person, Person.class);
 
-        return repository.save(person);
+        return parseObject(repository.save(entity), PersonDTO.class);
     }
 
-    public Person update(Person person) {
+    public PersonDTO update(PersonDTO person) {
         logger.info("Atualizando uma pessoa!");
 
         Person pessoa = repository.findById(person.getId()).orElseThrow(() -> new ResourceNotFoundException("Não achou nenhum registro com esse ID"));
@@ -62,7 +67,7 @@ public class PersonServices {
         pessoa.setAddress(person.getAddress());
         pessoa.setGender(person.getGender());
 
-        return repository.save(pessoa);
+        return parseObject(repository.save(pessoa), PersonDTO.class);
     }
 
     public void delete(Long id) {
