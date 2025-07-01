@@ -1,12 +1,9 @@
 package com.gustavo.luan.service;
 
-import com.gustavo.luan.data.dto.v1.PersonDTO;
-import com.gustavo.luan.data.dto.v2.PersonDTOV2;
+import com.gustavo.luan.data.dto.PersonDTO;
 import com.gustavo.luan.exception.ResourceNotFoundException;
 import static com.gustavo.luan.mapper.ObjectMapper.parseObject;
 import static com.gustavo.luan.mapper.ObjectMapper.parseListObjects;
-
-import com.gustavo.luan.mapper.custom.PersonMapper;
 import com.gustavo.luan.model.Person;
 import com.gustavo.luan.repository.PersonRepository;
 import org.slf4j.Logger;
@@ -14,6 +11,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicLong;
 
@@ -24,9 +22,6 @@ public class PersonServices {
 
     @Autowired
     PersonRepository repository;
-
-    @Autowired
-    PersonMapper pMapper;
 
     private Logger logger = LoggerFactory.getLogger(PersonServices.class.getName());
 
@@ -60,13 +55,6 @@ public class PersonServices {
         var entity = parseObject(person, Person.class);
 
         return parseObject(repository.save(entity), PersonDTO.class);
-    }
-
-    public PersonDTOV2 createV2(PersonDTOV2 person) {
-        logger.info("Criando uma pessoa!");
-        var entity = pMapper.convertDTOToEntity(person);
-
-        return pMapper.convertEntityToDTO(repository.save(entity));
     }
 
     public PersonDTO update(PersonDTO person) {
