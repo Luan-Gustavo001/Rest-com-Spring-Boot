@@ -1,6 +1,7 @@
 package com.gustavo.luan.controllers;
 
-import com.gustavo.luan.data.dto.PersonDTO;
+import com.gustavo.luan.data.dto.v1.PersonDTO;
+import com.gustavo.luan.data.dto.v2.PersonDTOV2;
 import com.gustavo.luan.service.PersonServices;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
@@ -37,6 +38,14 @@ public class PersonContoller {
 
         return service.create(person);
      }
+
+    @PostMapping(value = "/v2",
+     produces = MediaType.APPLICATION_JSON_VALUE,
+     consumes = MediaType.APPLICATION_JSON_VALUE)
+    public PersonDTOV2 createV2(@RequestBody PersonDTOV2 person) {
+
+        return service.createV2(person);
+    }
 
    @PutMapping(
     produces = MediaType.APPLICATION_JSON_VALUE,
