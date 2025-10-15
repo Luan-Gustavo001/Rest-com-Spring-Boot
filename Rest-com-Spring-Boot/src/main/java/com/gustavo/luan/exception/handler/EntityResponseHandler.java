@@ -40,7 +40,7 @@ public class EntityResponseHandler extends ResponseEntityExceptionHandler {
         return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
     }
 
-    @ExceptionHandler(RequiredObjectIsNullException .class)
+    @ExceptionHandler(RequiredObjectIsNullException.class)
     public final ResponseEntity<ExceptionResponse> handleBadRequestExceptions(Exception ex, WebRequest request){
 
         ExceptionResponse response = new ExceptionResponse(

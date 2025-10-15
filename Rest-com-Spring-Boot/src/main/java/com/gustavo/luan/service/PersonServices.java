@@ -1,6 +1,6 @@
 package com.gustavo.luan.service;
 
-import com.gustavo.luan.controllers.PersonContoller;
+import com.gustavo.luan.controllers.PersonController;
 import com.gustavo.luan.data.dto.PersonDTO;
 import com.gustavo.luan.exception.RequiredObjectIsNullException;
 import com.gustavo.luan.exception.ResourceNotFoundException;
@@ -15,9 +15,7 @@ import org.springframework.stereotype.Service;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.atomic.AtomicLong;
 
 @Service
 public class PersonServices {
@@ -89,11 +87,11 @@ public class PersonServices {
     }
 
     private void addHateoasLinks(PersonDTO dto) {
-        dto.add(linkTo(methodOn(PersonContoller.class).finById(dto.getId())).withSelfRel().withType("GET"));
-        dto.add(linkTo(methodOn(PersonContoller.class).findAll()).withRel("findAll").withType("GET"));
-        dto.add(linkTo(methodOn(PersonContoller.class).create(dto)).withRel("create").withType("POST"));
-        dto.add(linkTo(methodOn(PersonContoller.class).update(dto)).withRel("update").withType("PUT"));
-        dto.add(linkTo(methodOn(PersonContoller.class).delete(dto.getId())).withRel("delete").withType("DELETE"));
+        dto.add(linkTo(methodOn(PersonController.class).findById(dto.getId())).withSelfRel().withType("GET"));
+        dto.add(linkTo(methodOn(PersonController.class).findAll()).withRel("findAll").withType("GET"));
+        dto.add(linkTo(methodOn(PersonController.class).create(dto)).withRel("create").withType("POST"));
+        dto.add(linkTo(methodOn(PersonController.class).update(dto)).withRel("update").withType("PUT"));
+        dto.add(linkTo(methodOn(PersonController.class).delete(dto.getId())).withRel("delete").withType("DELETE"));
     }
 
 }
