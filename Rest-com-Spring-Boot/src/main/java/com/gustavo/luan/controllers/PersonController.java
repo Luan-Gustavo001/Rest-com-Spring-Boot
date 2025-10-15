@@ -11,14 +11,14 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/person/v1")
-public class PersonContoller {
+public class PersonController {
 
     @Autowired
     private PersonServices service;
 
     @GetMapping(value = "/{id}",
      produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_YAML_VALUE})
-     public PersonDTO finById(@PathVariable("id") Long id) {
+     public PersonDTO findById(@PathVariable("id") Long id) {
 
         return service.findById(id);
      }

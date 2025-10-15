@@ -1,6 +1,8 @@
 package com.gustavo.luan.service;
 
+import com.gustavo.luan.controllers.PersonController;
 import com.gustavo.luan.data.dto.PersonDTO;
+import com.gustavo.luan.exception.RequiredObjectIsNullException;
 import com.gustavo.luan.exception.ResourceNotFoundException;
 import static com.gustavo.luan.mapper.ObjectMapper.parseObject;
 import static com.gustavo.luan.mapper.ObjectMapper.parseListObjects;
@@ -10,15 +12,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.atomic.AtomicLong;
 
 @Service
 public class PersonServices {
-
-    private final AtomicLong counter = new AtomicLong();
 
     @Autowired
     PersonRepository repository;
@@ -29,35 +29,41 @@ public class PersonServices {
         logger.info("Achando uma pessoa!");
         var entidade = repository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Não achou nenhum registro com esse ID: " + id));
 
-        return parseObject(entidade, PersonDTO.class);
+        var dto = parseObject(entidade, PersonDTO.class);
+
+        addHateoasLinks(dto);
+        return dto;
     }
+
+
 
     public List<PersonDTO> findAll(){
         logger.info("Achando varias pessoaa!");
 
-        return parseListObjects(repository.findAll(), PersonDTO.class);
-    }
+        var persons = parseListObjects(repository.findAll(), PersonDTO.class);
+        persons.forEach(this :: addHateoasLinks);
 
-    private Person mockPerson(int i) {
-
-        Person person = new Person();
-        person.setId(counter.incrementAndGet());
-        person.setFirstName("First Name " + i);
-        person.setLastName("Last Name " + i);
-        person.setAddress("Address " + i);
-        person.setGender("Gender " + i);
-
-        return person;
+        return persons;
     }
 
     public PersonDTO create(PersonDTO person) {
+
+        if (person == null) throw new RequiredObjectIsNullException();
+
         logger.info("Criando uma pessoa!");
         var entity = parseObject(person, Person.class);
 
-        return parseObject(repository.save(entity), PersonDTO.class);
+        var dto = parseObject(repository.save(entity), PersonDTO.class);
+
+        addHateoasLinks(dto);
+
+        return dto;
     }
 
     public PersonDTO update(PersonDTO person) {
+
+        if (person == null) throw new RequiredObjectIsNullException();
+
         logger.info("Atualizando uma pessoa!");
 
         Person pessoa = repository.findById(person.getId()).orElseThrow(() -> new ResourceNotFoundException("Não achou nenhum registro com esse ID"));
@@ -67,7 +73,9 @@ public class PersonServices {
         pessoa.setAddress(person.getAddress());
         pessoa.setGender(person.getGender());
 
-        return parseObject(repository.save(pessoa), PersonDTO.class);
+        var dto = parseObject(repository.save(pessoa), PersonDTO.class);
+        addHateoasLinks(dto);
+        return dto;
     }
 
     public void delete(Long id) {
@@ -77,4 +85,13 @@ public class PersonServices {
 
         repository.delete(pessoa);
     }
+
+    private void addHateoasLinks(PersonDTO dto) {
+        dto.add(linkTo(methodOn(PersonController.class).findById(dto.getId())).withSelfRel().withType("GET"));
+        dto.add(linkTo(methodOn(PersonController.class).findAll()).withRel("findAll").withType("GET"));
+        dto.add(linkTo(methodOn(PersonController.class).create(dto)).withRel("create").withType("POST"));
+        dto.add(linkTo(methodOn(PersonController.class).update(dto)).withRel("update").withType("PUT"));
+        dto.add(linkTo(methodOn(PersonController.class).delete(dto.getId())).withRel("delete").withType("DELETE"));
+    }
+
 }
